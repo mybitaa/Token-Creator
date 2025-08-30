@@ -1,12 +1,46 @@
-{
-  "name": "token-creator",
-  "version": "1.0.0",
-  "lockfileVersion": 3,
-  "requires": true,
-  "packages": {
-    "": {
-      "name": "token-creator",
-      "version": "1.0.0"
-    }
-  }
-}
+name: Create Package Lock
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main, master ]
+
+jobs:
+  create-lockfile:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          
+      - name: Install dependencies
+        run: npm install
+        
+      - name: Check if lockfile was created
+        run: |
+          if [ -f package-lock.json ]; then
+            echo "package-lock.json created successfully"
+            ls -la package-lock.json
+          else
+            echo "Failed to create package-lock.json"
+            exit 1
+          fi
+        
+      - name: Commit lockfile
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add package-lock.json
+          
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "Add package-lock.json for security scanning"
+            git push
+          fi
