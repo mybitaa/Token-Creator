@@ -1,30 +1,12 @@
-name: Create Lockfile
-on: workflow_dispatch
-
-jobs:
-  create-lockfile:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18'
-          
-      - name: Create package.json if missing
-        run: |
-          if [ ! -f package.json ]; then
-            npm init -y
-          fi
-          
-      - name: Install dependencies
-        run: npm install
-        
-      - name: Commit lockfile
-        run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git add package-lock.json package.json
-          git commit -m "Add lockfile for security scanning" || exit 0
-          git push
+{
+  "name": "token-creator",
+  "version": "1.0.0",
+  "lockfileVersion": 3,
+  "requires": true,
+  "packages": {
+    "": {
+      "name": "token-creator",
+      "version": "1.0.0"
+    }
+  }
+}
